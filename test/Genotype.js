@@ -1,3 +1,5 @@
+require("chai").should();
+
 describe("Genotype", function() {
     var Genotype = require("../src/Genotype");
 
@@ -13,7 +15,7 @@ describe("Genotype", function() {
         });
 
         describe("one argument", function() {
-            it("should create with genotype from given gene", function() {
+            it("should create with genotype from given gene correctly", function() {
                 var genotype = new Genotype(null, 0x42891e);
 
                 genotype.x.should.equal(66);

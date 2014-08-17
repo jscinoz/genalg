@@ -1,3 +1,5 @@
+require("chai").should();
+
 describe("Circle", function() {
     var Circle = require("../src/Circle");
 
