@@ -42,9 +42,9 @@ module.exports = function(grunt) {
                 options: {
                     reporter: "html-cov",
                     quiet: true,
-                    captureFile: "cov.html"
+                    captureFile: "build/cov/index.html"
                 },
-                src: [ "cov/*.js" ]
+                src: [ "build/cov/*.js" ]
             }
         },
         watch: {
