@@ -88,14 +88,14 @@ World.prototype = Object.create(null, {
             var intersectArea = this.getTotalOverlapArea(circle),
                 isInBounds = this.contains(circle);
 
-            return Math.round(circle.r * (
+            return Math.round(Math.max(circle.r * (
                 (
                     intersectArea === 0 ? 1 : (
                         isInBounds ? -intersectArea : intersectArea
                     )
                 ) *
                 (isInBounds ? 1 : -2)
-            )) + this.worstFitness;
+            )), this.worstFitness);
         }
     },
     updateFitness: {
