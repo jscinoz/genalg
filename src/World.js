@@ -1,5 +1,7 @@
 "use strict"
 
+require("seedrandom");
+
 var Circle = require("./Circle"),
     Genotype = require("./Genotype");
 
