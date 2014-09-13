@@ -5,42 +5,55 @@ var gulp = require("gulp"),
     livereload = require("gulp-livereload"),
     sourcemaps = require("gulp-sourcemaps"),
     mocha = require("gulp-mocha"),
-    cover = require("gulp-coverage");
+    istanbul = require("gulp-istanbul"),
+    karma = require("karma").server;
 
 gulp.task("build", function() {
-    gulp.src("src/index.js")
-    .pipe(browserify({
-        debug: true
-    }))
-    .pipe(rename("bundle.js"))
-    .pipe(sourcemaps.init({
-        loadMaps: true
-    }))
-    .pipe(uglify())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest("build"))
+    return gulp.src("src/index.js")
+               .pipe(browserify({
+                   debug: true
+               }))
+               .pipe(rename("bundle.js"))
+               .pipe(sourcemaps.init({ loadMaps: true }))
+                   .pipe(uglify())
+               .pipe(sourcemaps.write())
+               .pipe(gulp.dest("build"))
+               .pipe(livereload({ auto: false }));
 });
 
-gulp.task("test", function() {
-    gulp.src("test/**/*.js", { read: false })
-    .pipe(cover.instrument({
-        pattern: [ "src/**/*.js" ]
-    }))
-    .pipe(mocha())
-    .pipe(cover.report({
-        outFile: "coverage.html"
-    }))
+gulp.task("cover", function() {
+    return gulp.src("src/**/*.js")
+               .pipe(istanbul());
 });
 
+gulp.task("test-node", [ "cover" ], function(done) {
+    return gulp.src("test/**/*.js")
+               .pipe(mocha())
+               .pipe(istanbul.writeReports({
+                   dir: "build/coverage",
+                   reporters: [ "html", "text" ]
+               }));
+});
+
+gulp.task("test-browser", [ "build" ], function(done) {
+    karma.start({
+        files: [
+            "build/bundle.js",
+            "test/**/*.js",
+        ],
+        frameworks: [ "mocha", "chai" ],
+        singleRun: true
+    }, done);
+});
 
 gulp.task("watch", function() {
-    gulp.watch("src/**/*.js", function() {
-        gulp.run("build");
-    });
+    // FIXME: Livereload isn't working D:
+    livereload.listen();
 
-    gulp.watch("{src,test}/**/*.js", function() {
-        gulp.run("test");
-    });
+    gulp.watch("src/**/*.js", [ "build" ]);
+
+    gulp.watch("{src,test}/**/*.js", [ "build",  "test" ]);
 });
 
+gulp.task("test", [ "test-node", "test-browser" ]);
 gulp.task("default", ["build"]);
