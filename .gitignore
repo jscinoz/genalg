@@ -1,6 +1,3 @@
 /build
-/.coverdata
-/.coverrun
-/coverage.html
 node_modules
 .*.sw[op]
